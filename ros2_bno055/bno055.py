@@ -22,7 +22,6 @@ import rclpy
 import rclpy.node
 from rclpy.exceptions import InvalidParameterValueException
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
-from example_interfaces.msg import Bool
 from sensor_msgs.msg import Imu, MagneticField, Temperature
 
 import board  # Adafruit Blinka
@@ -78,8 +77,11 @@ OP_MODES = {
     adafruit_bno055.NDOF_MODE: "NDOF_MODE"
 }
 
+
 def axis_remap_translate(placement: str) -> tuple:
-    """Convert an axis remap placement (e.g. 'P0', 'P3' to a remap configuration tuple suitable for passing to the axis_remap() method of adafruit_bno055.BNO055.
+    """
+    Convert an axis remap placement (e.g. 'P0', 'P3' to a remap configuration tuple
+    suitable for passing to the axis_remap() method of adafruit_bno055.BNO055.
     """
     arc, ars = AXIS_REMAP_PARAMS[placement]
     x = arc & 0x03
@@ -104,32 +106,32 @@ class BNO055Pub(rclpy.node.Node):
             ("mag_update_rate", 0.1),  # 10 Hz
         ))
 
-        _bno055_interface = self.get_parameter("interface").get_parameter_value().string_value.lower()
-        if _bno055_interface == "i2c":
+        bno055_interface = self.get_parameter("interface").get_parameter_value().string_value.lower()
+        if bno055_interface == "i2c":
             i2c = board.I2C()
             self.bno055 = adafruit_bno055.BNO055_I2C(i2c)
-        elif _bno055_interface == "uart":
+        elif bno055_interface == "uart":
             uart = board.UART()
             self.bno055 = adafruit_bno055.BNO055_UART(uart)
         else:
             raise InvalidParameterValueException
 
-        axis_remap = self.get_parameter("axis_remap").get_parameter_value().string_value
+        axis_remap = self.get_parameter("axis_remap").get_parameter_value().string_value.upper()
         if axis_remap not in AXIS_REMAP_PARAMS:
             raise InvalidParameterValueException
         self.bno055.axis_remap = axis_remap_translate(axis_remap)
 
         self._temp_pub = self.create_publisher(Temperature, "temperature", 10)
-        _temp_rate = self.get_parameter("temp_update_rate").get_parameter_value().double_value
-        self._temp_timer = self.create_timer(_temp_rate, self.temp_timer_callback)
+        temp_rate = self.get_parameter("temp_update_rate").get_parameter_value().double_value
+        self._temp_timer = self.create_timer(temp_rate, self.temp_timer_callback)
 
         self._imu_pub = self.create_publisher(Imu, "imu", 10)
-        _imu_rate = self.get_parameter("imu_update_rate").get_parameter_value().double_value
-        self._imu_timer = self.create_timer(_imu_rate, self.imu_timer_callback)
+        imu_rate = self.get_parameter("imu_update_rate").get_parameter_value().double_value
+        self._imu_timer = self.create_timer(imu_rate, self.imu_timer_callback)
 
         self._mag_pub = self.create_publisher(MagneticField, "magnetometer", 10)
-        _mag_rate = self.get_parameter("mag_update_rate").get_parameter_value().double_value
-        self._mag_timer = self.create_timer(_mag_rate, self.mag_timer_callback)
+        mag_rate = self.get_parameter("mag_update_rate").get_parameter_value().double_value
+        self._mag_timer = self.create_timer(mag_rate, self.mag_timer_callback)
 
         self._diag_pub = self.create_publisher(DiagnosticArray, "diagnostics", 10)
         self._diag_timer = self.create_timer(1, self.diag_timer_callback)
@@ -206,7 +208,7 @@ class BNO055Pub(rclpy.node.Node):
             kv.key = name
             kv.value = str(status)
             calib_msg.values.append(kv)
-        
+
         mode_msg = DiagnosticStatus()
         mode_msg.name = "Mode"
         mode_msg.hardware_id = "BNO055"
