@@ -100,6 +100,7 @@ class BNO055Pub(rclpy.node.Node):
 
         self.declare_parameters("", (
             ("interface", "i2c"),
+            ("frame_id", "imu"),
             ("axis_remap", "P1"),
             ("temp_update_rate", 1.0),  # 1 Hz
             ("imu_update_rate", 0.1),  # 10 Hz
@@ -115,6 +116,8 @@ class BNO055Pub(rclpy.node.Node):
             self.bno055 = adafruit_bno055.BNO055_UART(uart)
         else:
             raise InvalidParameterValueException
+
+        self.frame_id = self.get_parameter("frame_id").get_parameter_value().string_value
 
         axis_remap = self.get_parameter("axis_remap").get_parameter_value().string_value.upper()
         if axis_remap not in AXIS_REMAP_PARAMS:
@@ -139,12 +142,14 @@ class BNO055Pub(rclpy.node.Node):
     def temp_timer_callback(self) -> None:
         msg = Temperature()
         msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = self.frame_id
         msg.temperature = float(self.bno055.temperature)
         self._temp_pub.publish(msg)
 
     def imu_timer_callback(self) -> None:
         msg = Imu()
         msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = self.frame_id
         bno055_quaternion = self.bno055.quaternion
         bno055_gyro = self.bno055.gyro
         bno055_linear_accel = self.bno055.linear_acceleration
@@ -171,6 +176,7 @@ class BNO055Pub(rclpy.node.Node):
     def mag_timer_callback(self) -> None:
         msg = MagneticField()
         msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = self.frame_id
         bno055_magnetic = self.bno055.magnetic
 
         for i, a in enumerate(['x', 'y', 'z']):
@@ -190,6 +196,7 @@ class BNO055Pub(rclpy.node.Node):
     def diag_timer_callback(self) -> None:
         msg_arr = DiagnosticArray()
         msg_arr.header.stamp = self.get_clock().now().to_msg()
+        msg_arr.header.frame_id = self.frame_id
 
         calib_msg = DiagnosticStatus()
         calib_msg.name = "Calibration Status"
