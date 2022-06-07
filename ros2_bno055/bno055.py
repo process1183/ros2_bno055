@@ -235,7 +235,11 @@ class BNO055Pub(rclpy.node.Node):
 def main(args = None) -> None:
     rclpy.init(args=args)
     bno055_pub = BNO055Pub()
-    rclpy.spin(bno055_pub)
+
+    try:
+        rclpy.spin(bno055_pub)
+    except KeyboardInterrupt:
+        pass
 
     bno055_pub.destroy_node()
     rclpy.shutdown()
