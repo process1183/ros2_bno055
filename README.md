@@ -19,7 +19,7 @@ ROS2 node for the [Bosch BNO055 IMU](https://www.adafruit.com/product/2472).
 | --------- | ---- | ------- | ----------- |
 | `interface` | String | `i2c` | BNO055 interface. Can be `i2c` or `uart`. |
 | `frame_id` | String | `imu` | Frame ID for published sensor data. |
-| `axis_remap` | String | `P1` | Axis remap placement (see section 3.4 of the [datasheet](https://cdn-learn.adafruit.com/assets/assets/000/036/832/original/BST_BNO055_DS000_14.pdf). Valid values are: `P0`, `P1`, ..., `P7` |
+| `axis_remap` | String | `P1` | Axis remap placement (see section 3.4 of the [datasheet](https://cdn-learn.adafruit.com/assets/assets/000/036/832/original/BST_BNO055_DS000_14.pdf)). Valid values are: `P0`, `P1`, ..., `P7` |
 | `temp_update_rate` | Float | `1.0` | How often, in seconds, to publish the temperature. Default is 1 Hz. |
 | `imu_update_rate` | Float | `0.1` | How often, in seconds, to publish the IMU data. Default is 10 Hz. |
 | `mag_update_rate` | Float | `0.1` | How often, in seconds, to publish the magnetometer data. Default is 10 Hz. |
