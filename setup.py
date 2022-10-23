@@ -4,7 +4,7 @@ package_name = 'ros2_bno055'
 
 setup(
     name=package_name,
-    version='0.2.0',
+    version='0.2.1',
     packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
