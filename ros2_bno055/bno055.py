@@ -23,6 +23,7 @@ import rclpy.node
 from rclpy.exceptions import InvalidParameterValueException
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 from sensor_msgs.msg import Imu, MagneticField, Temperature
+from tf_transformations import euler_from_quaternion
 
 import board  # Adafruit Blinka
 import adafruit_bno055  # https://pypi.org/project/adafruit-circuitpython-bno055/
@@ -153,7 +154,12 @@ class BNO055Pub(rclpy.node.Node):
         bno055_quaternion = self.bno055.quaternion
         bno055_gyro = self.bno055.gyro
         bno055_linear_accel = self.bno055.linear_acceleration
-
+        # Convert to Euler angles (in radians)
+        yaw, pitch, roll = euler_from_quaternion(bno055_quaternion)            
+        
+        print(f"roll: {roll}, pitch: {pitch}, yaw: {yaw}")  
+        # Set the orientation in the message
+        
         for i, a in enumerate(['x', 'y', 'z', 'w']):
             setattr(msg.orientation, a, bno055_quaternion[i])
 
