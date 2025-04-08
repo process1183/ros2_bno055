@@ -157,8 +157,7 @@ class BNO055Pub(rclpy.node.Node):
         # Convert to Euler angles (in radians)
         yaw, pitch, roll = euler_from_quaternion(bno055_quaternion)            
         
-        print(f"roll: {roll}, pitch: {pitch}, yaw: {yaw}")  
-        # Set the orientation in the message
+        print(f"roll: {roll}, pitch: {pitch}, yaw: {yaw}")          #can be commented out if not needed
         
         for i, a in enumerate(['x', 'y', 'z', 'w']):
             setattr(msg.orientation, a, bno055_quaternion[i])
