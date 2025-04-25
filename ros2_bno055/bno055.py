@@ -23,6 +23,8 @@ import rclpy.node
 from rclpy.exceptions import InvalidParameterValueException
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 from sensor_msgs.msg import Imu, MagneticField, Temperature
+from tf_transformations import euler_from_quaternion
+from geometry_msgs.msg import Vector3
 
 import board  # Adafruit Blinka
 import adafruit_bno055  # https://pypi.org/project/adafruit-circuitpython-bno055/
@@ -131,6 +133,7 @@ class BNO055Pub(rclpy.node.Node):
         self._imu_pub = self.create_publisher(Imu, "imu", 10)
         imu_rate = self.get_parameter("imu_update_rate").get_parameter_value().double_value
         self._imu_timer = self.create_timer(imu_rate, self.imu_timer_callback)
+        self._euler_imu_pub = self.create_publisher(Vector3, "imu_euler", 10)           #to publish euler angles
 
         self._mag_pub = self.create_publisher(MagneticField, "magnetometer", 10)
         mag_rate = self.get_parameter("mag_update_rate").get_parameter_value().double_value
@@ -153,7 +156,10 @@ class BNO055Pub(rclpy.node.Node):
         bno055_quaternion = self.bno055.quaternion
         bno055_gyro = self.bno055.gyro
         bno055_linear_accel = self.bno055.linear_acceleration
-
+        # Convert to Euler angles (in radians)
+        yaw, pitch, roll = euler_from_quaternion(bno055_quaternion)  
+        #print(f"roll: {roll}, pitch: {pitch}, yaw: {yaw}")          #can be uncommented if needed
+        
         for i, a in enumerate(['x', 'y', 'z', 'w']):
             setattr(msg.orientation, a, bno055_quaternion[i])
 
@@ -172,6 +178,10 @@ class BNO055Pub(rclpy.node.Node):
         msg.linear_acceleration_covariance = LINEAR_ACCELERATION_COVARIANCE
 
         self._imu_pub.publish(msg)
+        # Publish Euler angles to /imu_euler topic
+        euler_msg = Vector3()
+        euler_msg.x, euler_msg.y, euler_msg.z = roll, pitch, yaw
+        self._euler_imu_pub.publish(euler_msg)
 
     def mag_timer_callback(self) -> None:
         msg = MagneticField()
