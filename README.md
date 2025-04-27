@@ -7,10 +7,11 @@ ROS2 node for the [Bosch BNO055 IMU](https://www.adafruit.com/product/2472).
 
 | Topic | Type | Description |
 | ----- | ---- | ----------- |
-| `/bno055/diagnostics` | [diagnostic_msgs/msg/DiagnosticArray](https://docs.ros2.org/foxy/api/diagnostic_msgs/msg/DiagnosticArray.html) | Status of sensor calibration, mode, and axis remapping. |
-| `/bno055/imu` | [sensor_msgs/msg/Imu](https://docs.ros2.org/foxy/api/sensor_msgs/msg/Imu.html) | Absolute orientation quaternion, angular velocity vector (rad/s), linear acceleration vector (m/s^2) |
-| `/bno055/magnetometer` | [sensor_msgs/msg/MagneticField](https://docs.ros2.org/foxy/api/sensor_msgs/msg/MagneticField.html) | Magnetic field strength vector (uT) |
-| `/bno055/temperature` | [sensor_msgs/msg/Temperature](https://docs.ros2.org/foxy/api/sensor_msgs/msg/Temperature.html) | Sensor temperature (C) |
+| `/bno055/diagnostics` | [diagnostic_msgs/msg/DiagnosticArray](https://docs.ros.org/en/ros2_packages/humble/api/diagnostic_msgs/msg/DiagnosticArray.html) | Status of sensor calibration, mode, and axis remapping. |
+| `/bno055/imu` | [sensor_msgs/msg/Imu](https://docs.ros.org/en/ros2_packages/humble/api/sensor_msgs/msg/Imu.html) | Absolute orientation quaternion, angular velocity vector (rad/s), linear acceleration vector (m/s^2) |
+| `/bno055/imu_euler` | [geometry_msgs/msg/Vector3](https://docs.ros.org/en/ros2_packages/humble/api/geometry_msgs/msg/Vector3.html) | Absolute orientation Euler vector (yaw, pitch, roll) |
+| `/bno055/magnetometer` | [sensor_msgs/msg/MagneticField](https://docs.ros.org/en/ros2_packages/humble/api/sensor_msgs/msg/MagneticField.html) | Magnetic field strength vector (Tesla) |
+| `/bno055/temperature` | [sensor_msgs/msg/Temperature](https://docs.ros.org/en/ros2_packages/humble/api/sensor_msgs/msg/Temperature.html) | Sensor temperature (C) |
 
 
 ## Parameters ##

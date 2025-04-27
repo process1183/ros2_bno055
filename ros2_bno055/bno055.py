@@ -1,7 +1,7 @@
 """
 ROS2 node for the Bosch BNO055 IMU
 https://github.com/process1183/ros2_bno055
-Copyright (C) 2022  Josh Gadeken
+Copyright (C) 2025  Josh Gadeken
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -133,7 +133,7 @@ class BNO055Pub(rclpy.node.Node):
         self._imu_pub = self.create_publisher(Imu, "imu", 10)
         imu_rate = self.get_parameter("imu_update_rate").get_parameter_value().double_value
         self._imu_timer = self.create_timer(imu_rate, self.imu_timer_callback)
-        self._euler_imu_pub = self.create_publisher(Vector3, "imu_euler", 10)           #to publish euler angles
+        self._euler_imu_pub = self.create_publisher(Vector3, "imu_euler", 10)  # to publish euler angles
 
         self._mag_pub = self.create_publisher(MagneticField, "magnetometer", 10)
         mag_rate = self.get_parameter("mag_update_rate").get_parameter_value().double_value
@@ -156,9 +156,13 @@ class BNO055Pub(rclpy.node.Node):
         bno055_quaternion = self.bno055.quaternion
         bno055_gyro = self.bno055.gyro
         bno055_linear_accel = self.bno055.linear_acceleration
+
         # Convert to Euler angles (in radians)
+        # Not using the Euler angles reported from the BNO055, since they
+        #   "are based on 'automatic orientation detection'" and are not suitable for absolute orientation.
+        #   https://learn.adafruit.com/adafruit-bno055-absolute-orientation-sensor/faqs#faq-2974423
         yaw, pitch, roll = euler_from_quaternion(bno055_quaternion)  
-        #print(f"roll: {roll}, pitch: {pitch}, yaw: {yaw}")          #can be uncommented if needed
+        #print(f"roll: {roll}, pitch: {pitch}, yaw: {yaw}")  # can be uncommented if needed
         
         for i, a in enumerate(['x', 'y', 'z', 'w']):
             setattr(msg.orientation, a, bno055_quaternion[i])
