@@ -164,7 +164,7 @@ class BNO055Pub(rclpy.node.Node):
         yaw, pitch, roll = euler_from_quaternion(bno055_quaternion)  
         #print(f"roll: {roll}, pitch: {pitch}, yaw: {yaw}")  # can be uncommented if needed
         
-        for i, a in enumerate(['x', 'y', 'z', 'w']):
+        for i, a in enumerate(['w', 'x', 'y', 'z']):
             setattr(msg.orientation, a, bno055_quaternion[i])
 
         msg.orientation_covariance = ORIENTATION_COVARIANCE
