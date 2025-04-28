@@ -24,7 +24,7 @@ from rclpy.exceptions import InvalidParameterValueException
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 from sensor_msgs.msg import Imu, MagneticField, Temperature
 from tf_transformations import euler_from_quaternion
-from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Vector3, Vector3Stamped
 
 import board  # Adafruit Blinka
 import adafruit_bno055  # https://pypi.org/project/adafruit-circuitpython-bno055/
@@ -107,6 +107,7 @@ class BNO055Pub(rclpy.node.Node):
             ("temp_update_rate", 1.0),  # 1 Hz
             ("imu_update_rate", 0.1),  # 10 Hz
             ("mag_update_rate", 0.1),  # 10 Hz
+            ("grav_update_rate", 0.1),  # 10 Hz
         ))
 
         bno055_interface = self.get_parameter("interface").get_parameter_value().string_value.lower()
@@ -138,6 +139,10 @@ class BNO055Pub(rclpy.node.Node):
         self._mag_pub = self.create_publisher(MagneticField, "magnetometer", 10)
         mag_rate = self.get_parameter("mag_update_rate").get_parameter_value().double_value
         self._mag_timer = self.create_timer(mag_rate, self.mag_timer_callback)
+
+        self._grav_pub = self.create_publisher(Vector3Stamped, "gravity", 10)
+        grav_rate = self.get_parameter("grav_update_rate").get_parameter_value().double_value
+        self._grav_timer = self.create_timer(grav_rate, self.grav_timer_callback)
 
         self._diag_pub = self.create_publisher(DiagnosticArray, "diagnostics", 10)
         self._diag_timer = self.create_timer(1, self.diag_timer_callback)
@@ -206,6 +211,17 @@ class BNO055Pub(rclpy.node.Node):
         ]
 
         self._mag_pub.publish(msg)
+
+    def grav_timer_callback(self) -> None:
+        msg = Vector3Stamped()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = self.frame_id
+        bno055_gravity = self.bno055.gravity
+
+        for i, a in enumerate(['x', 'y', 'z']):
+            setattr(msg.vector, a, bno055_gravity[i])
+
+        self._grav_pub.publish(msg)
 
     def diag_timer_callback(self) -> None:
         msg_arr = DiagnosticArray()

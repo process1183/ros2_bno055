@@ -8,6 +8,7 @@ ROS2 node for the [Bosch BNO055 IMU](https://www.adafruit.com/product/2472).
 | Topic | Type | Description |
 | ----- | ---- | ----------- |
 | `/bno055/diagnostics` | [diagnostic_msgs/msg/DiagnosticArray](https://docs.ros.org/en/ros2_packages/humble/api/diagnostic_msgs/msg/DiagnosticArray.html) | Status of sensor calibration, mode, and axis remapping. |
+| `/bno055/gravity` | [geometry_msgs/msg/Vector3Stamped](https://docs.ros.org/en/ros2_packages/humble/api/geometry_msgs/msg/Vector3Stamped.html) | Gravity vector (m/s^2) |
 | `/bno055/imu` | [sensor_msgs/msg/Imu](https://docs.ros.org/en/ros2_packages/humble/api/sensor_msgs/msg/Imu.html) | Absolute orientation quaternion, angular velocity vector (rad/s), linear acceleration vector (m/s^2) |
 | `/bno055/imu_euler` | [geometry_msgs/msg/Vector3](https://docs.ros.org/en/ros2_packages/humble/api/geometry_msgs/msg/Vector3.html) | Absolute orientation Euler vector (yaw, pitch, roll) |
 | `/bno055/magnetometer` | [sensor_msgs/msg/MagneticField](https://docs.ros.org/en/ros2_packages/humble/api/sensor_msgs/msg/MagneticField.html) | Magnetic field strength vector (Tesla) |
@@ -24,6 +25,7 @@ ROS2 node for the [Bosch BNO055 IMU](https://www.adafruit.com/product/2472).
 | `temp_update_rate` | Float | `1.0` | How often, in seconds, to publish the temperature. Default is 1 Hz. |
 | `imu_update_rate` | Float | `0.1` | How often, in seconds, to publish the IMU data. Default is 10 Hz. |
 | `mag_update_rate` | Float | `0.1` | How often, in seconds, to publish the magnetometer data. Default is 10 Hz. |
+| `grav_update_rate` | Float | `0.1` | How often, in seconds, to publish the gravity vector data. Default is 10 Hz. |
 
 
 ## Usage ##
